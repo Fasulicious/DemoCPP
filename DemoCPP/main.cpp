@@ -108,6 +108,8 @@ int main()
   Exe("DemoPointersToStruct", DemoPointersToStruct);
   Exe("DemoPointersToMembers1", DemoPointersToMembers1);
   Exe("DemoPointersToMembers2", DemoPointersToMembers2);
+
+  Exe("DemoBinaryTree2", DemoBinaryTree2);
   return 0;
 }
 

@@ -6,10 +6,20 @@
 #define DEFAULT_BTREE_ORDER 3
 
 const int MaxHeight = 5; 
-template <typename keyType, typename ObjIDType = long>
+
+template <typename K, typename ID>
+struct SimpleTrait
+{
+       using  keyType = K;
+       using  ObjIDType = ID;
+};
+// template <typename keyType, typename ObjIDType = long>
+template <typename Traits>
 class BTree // this is the full version of the BTree
 {
-       typedef CBTreePage <keyType, ObjIDType> BTNode;// useful shorthand
+       typedef typename Traits::keyType           keyType;
+       typedef typename Traits::ObjIDType         ObjIDType;
+       typedef CBTreePage <Traits> BTNode;// useful shorthand
 
 public:
        //typedef ObjectInfo iterator;
@@ -33,8 +43,28 @@ public:
        //int           Open (char * name, int mode);
        //int           Create (char * name, int mode);
        //int           Close ();
-       bool            Insert (const keyType key, const int ObjID);
-       bool            Remove (const keyType key, const int ObjID);
+       bool            Insert (const keyType key, const int ObjID) {
+              bt_ErrorCode error = m_Root.Insert(key, ObjID);
+              if( error == bt_duplicate )
+                     return false;
+              m_NumKeys++;
+              if( error == bt_overflow )
+              {
+                     m_Root.SplitRoot();
+                     m_Height++;
+              }
+              return true;
+       };
+       bool            Remove (const keyType key, const int ObjID) {
+              bt_ErrorCode error = m_Root.Remove(key, ObjID);
+              if( error == bt_duplicate || error == bt_nofound )
+                     return false;
+              m_NumKeys--;
+
+              if( error == bt_rootmerged )
+                     m_Height--;
+              return true;
+       };
        ObjIDType       Search (const keyType key)
        {      ObjIDType ObjID = -1;
               m_Root.Search(key, ObjID);
@@ -64,32 +94,32 @@ protected:
        bool            m_Unique;  // Accept the elements only once ?
 };     
 
-template <typename keyType, typename ObjIDType>
-bool BTree<keyType, ObjIDType>::Insert(const keyType key, const int ObjID)
-{
-       bt_ErrorCode error = m_Root.Insert(key, ObjID);
-       if( error == bt_duplicate )
-               return false;
-       m_NumKeys++;
-       if( error == bt_overflow )
-       {
-               m_Root.SplitRoot();
-               m_Height++;
-       }
-       return true;
-}
+// template <typename Traits>
+// bool BTree<Traits>::Insert(const BTree::keyType key, const BTree::ObjIDType ObjID)
+// {
+//        bt_ErrorCode error = m_Root.Insert(key, ObjID);
+//        if( error == bt_duplicate )
+//                return false;
+//        m_NumKeys++;
+//        if( error == bt_overflow )
+//        {
+//                m_Root.SplitRoot();
+//                m_Height++;
+//        }
+//        return true;
+// }
 
-template <typename keyType, typename ObjIDType>
-bool BTree<keyType, ObjIDType>::Remove (const keyType key, const int ObjID)
-{
-       bt_ErrorCode error = m_Root.Remove(key, ObjID);
-       if( error == bt_duplicate || error == bt_nofound )
-               return false;
-       m_NumKeys--;
+// template <typename Traits>
+// bool BTree<Traits>::Remove (const Traits::keyType key, const Traits::ObjIDType ObjID)
+// {
+//        bt_ErrorCode error = m_Root.Remove(key, ObjID);
+//        if( error == bt_duplicate || error == bt_nofound )
+//                return false;
+//        m_NumKeys--;
 
-       if( error == bt_rootmerged )
-               m_Height--;
-       return true;
-}
+//        if( error == bt_rootmerged )
+//                m_Height--;
+//        return true;
+// }
 
 #endif

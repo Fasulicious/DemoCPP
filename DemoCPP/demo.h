@@ -187,4 +187,6 @@ void DemoPointersToStruct();
 void DemoPointersToMembers1();
 void DemoPointersToMembers2();
 
+void DemoBinaryTree2();
+
 #endif
