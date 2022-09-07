@@ -1829,7 +1829,6 @@ void DemoBinaryTree()
     cout << "Descending Binarytree ..." << endl;
     BinaryTree< BinaryTreeDescTraits<TX> > myDescBinaryTree;
     DemoBinaryTree(myDescBinaryTree);
-    exit(0);
 }
 
 /**

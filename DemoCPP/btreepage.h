@@ -314,12 +314,11 @@ void CBTreePage<Traits>::RedistributeR2L(size_t pos)
                  pTarget->GetNumberOfKeys() < pSource->GetNumberOfKeys() )
        {
                // Move from this page to the down-left page \/
-               m_Keys.insert(m_Keys.begin() + pTarget -> NumberOfKeys()++, m_Keys[pos - 1]);
-               m_Keys.erase(m_Keys.end() - 1);
+               pTarget -> m_Keys.insert(pTarget -> m_Keys.begin() + pTarget -> NumberOfKeys()++, m_Keys[pos - 1]);
+               pTarget -> m_Keys.erase(pTarget -> m_Keys.end() - 1);
                // Move the pointer leftest pointer to the rightest position
                pTarget -> m_SubPages.insert(pTarget -> m_SubPages.begin() + pTarget -> NumberOfKeys(), pSource -> m_SubPages[0]);
                pTarget -> m_SubPages.erase(pTarget -> m_SubPages.end() - 1);
-
                // Move the leftest element to the root
                m_Keys[pos-1] = pSource->m_Keys[0];
 
